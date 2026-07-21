@@ -1,5 +1,6 @@
 * text=auto eol=lf
 *.png binary
+*.jpg binary
 *.mp4 binary
 
 # Captured evidence and copied reproduction fixtures are byte-exact artifacts.

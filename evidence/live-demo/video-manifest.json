@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "evidenceType": "captioned-local-live-walkthrough",
+  "capturedAt": "2026-07-20",
+  "runId": "flowplane-live-demo-20260720T110755Z-894bc2cb",
+  "sourceRevision": "10a26df4d7ed6a41f8076a5d7280d73db543c13a",
+  "documentation": "docs/live-demo.md",
+  "video": {
+    "path": "assets/flowplane-live-screen-demo-motion.mp4",
+    "sha256": "b1826dfb3af0f478e2c83f64f8d51da87679a1447a392860944c7cdbc234a091",
+    "bytes": 49725388,
+    "container": "mp4",
+    "videoCodec": "h264",
+    "width": 1920,
+    "height": 1200,
+    "framesPerSecond": 25,
+    "durationSeconds": 1170.28,
+    "audioTrack": false,
+    "captionMode": "58 persistent lower-third narration overlays"
+  },
+  "poster": {
+    "path": "assets/flowplane-live-demo-poster.jpg",
+    "sha256": "85242e9ecc0431ddd990f3ecb8cb30dadbdf306460bb1be60e943b47c3216695",
+    "sourceTimestampSeconds": 405
+  },
+  "scope": {
+    "mappingId": "6a5e03bf0c305eb209b46297",
+    "producerBoundary": "flowplane.demo.orders.raw only",
+    "scriptedDownstreamWrites": 0,
+    "runtimes": [
+      {
+        "type": "apache-flink-job",
+        "logicalRuntime": "flowplane-live-demo-flink",
+        "successDestination": "flowplane.demo.orders.flink.transformed",
+        "errorDestination": "flowplane.demo.orders.flink.dlq"
+      },
+      {
+        "type": "kafka-connect-mongodb-sink",
+        "logicalRuntime": "flowplane-live-demo-kafka-connect",
+        "successDestination": "flowplane_sink.flowplane_demo_orders_connect",
+        "errorDestination": "flowplane.demo.orders.connect.dlq"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "version": "1.0.0",
+      "sha256": "bcd0e68c98032a6eef6ee610cef82538a73cf607a077365cbf56d2c4a51d7ad9",
+      "flink": { "transformed": 1, "dlq": 1 },
+      "kafkaConnect": { "mongoDocuments": 1, "dlq": 1 }
+    },
+    {
+      "version": "1.1.0",
+      "sha256": "1919e736455fa02b2ff0bfcfa71abcc9040bd29a90eded897ffe8bbe603b8835",
+      "visibleAdditions": [
+        "customerRiskBand",
+        "mappingSchemaVersion",
+        "runtimeMetadataField"
+      ],
+      "flink": { "transformed": 1, "dlq": 1 },
+      "kafkaConnect": { "mongoDocuments": 1, "dlq": 1 }
+    }
+  ],
+  "runtimeGates": {
+    "connectCandidateReplay": {
+      "status": "COMPLETED",
+      "recordsCompared": 2,
+      "matched": 0,
+      "expectedDifferences": 1,
+      "expectedTransformFailures": 1,
+      "unexpectedDifferences": 0,
+      "contractViolations": 0
+    },
+    "flinkDownstreamSchema": {
+      "status": "PASSED"
+    }
+  },
+  "chapters": [
+    { "title": "Clean operational state", "atSeconds": 6.9 },
+    { "title": "Register the Kafka Connect connector", "atSeconds": 85.1 },
+    { "title": "Register the Flink job", "atSeconds": 148.1 },
+    { "title": "Govern and deploy v1", "atSeconds": 229.9 },
+    { "title": "Publish v2 and run runtime gates", "atSeconds": 658.3 },
+    { "title": "Connect candidate replay", "atSeconds": 686.9 },
+    { "title": "Flink downstream schema check", "atSeconds": 749.3 },
+    { "title": "Deploy and verify v2", "atSeconds": 778.8 },
+    { "title": "Mapping lifecycle", "atSeconds": 1096.0 }
+  ],
+  "limitations": [
+    "Local synthetic run; not a production-scale or managed-cloud qualification.",
+    "Scope is one Kafka Connect connector and one Apache Flink job.",
+    "Source metadata preserved the Git revision but not a clean/dirty worktree verdict or immutable container image digests.",
+    "Narration overlays were added after capture without changing the recorded runtime evidence."
+  ]
+}

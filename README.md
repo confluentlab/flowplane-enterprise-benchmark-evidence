@@ -6,9 +6,7 @@ Flowplane owns transformation semantics. The host runtime owns transport, delive
 
 This separation gives teams one place to author, validate, approve, version, deploy, observe, and roll back transformation logic without forcing every data system to adopt a new transport or connector model.
 
-[Watch the 30-second demo](assets/demo.mp4) · [See how it works](docs/how-it-works.md) · [Explore runtime portability](docs/runtime-portability.md) · [Inspect the evidence](evidence/integration-proofs/EVIDENCE-OVERVIEW.md)
-
-[![Flowplane product demo](assets/demo-poster.png)](assets/demo.mp4)
+[Watch the full live walkthrough](assets/flowplane-live-screen-demo-motion.mp4) · [Read the walkthrough](docs/live-demo.md) · [See how it works](docs/how-it-works.md) · [Inspect the evidence](evidence/integration-proofs/EVIDENCE-OVERVIEW.md)
 
 ## Why Flowplane exists
 
@@ -57,6 +55,14 @@ The control plane does not need to become the production payload path. A separat
 ![Flowplane architecture](assets/architecture.svg)
 
 Read [Architecture](docs/architecture.md), [How it works](docs/how-it-works.md), and [Governance and security](docs/governance-and-security.md) for the detailed model.
+
+## Live product walkthrough
+
+[![Flowplane live Kafka Connect and Flink walkthrough](assets/flowplane-live-demo-poster.jpg)](assets/flowplane-live-screen-demo-motion.mp4)
+
+The [19½-minute captioned walkthrough](assets/flowplane-live-screen-demo-motion.mp4) follows one mapping through simulation, approval, publication, deployment, runtime processing, failure handling, version evolution, compatibility gates, telemetry, and audit history. One Kafka Connect Mongo sink and one Flink job independently process the same raw Kafka inputs. The producer scripts write only to the raw topic; the runtimes create the transformed, DLQ, and Mongo results shown in the recording.
+
+Read the [scene-by-scene walkthrough and proof boundary](docs/live-demo.md), or inspect its [provenance manifest](evidence/live-demo/video-manifest.json).
 
 ## Execution modes
 
@@ -180,6 +186,7 @@ This public evidence repository also excludes Flowplane's production source code
 ## Repository navigation
 
 - [`docs/architecture.md`](docs/architecture.md) — system boundaries and component responsibilities
+- [`docs/live-demo.md`](docs/live-demo.md) — full live workflow, chapter guide, and proof boundary
 - [`docs/how-it-works.md`](docs/how-it-works.md) — mapping lifecycle from authoring through runtime execution
 - [`docs/runtime-portability.md`](docs/runtime-portability.md) — execution modes and latest preserved local evidence
 - [`docs/governance-and-security.md`](docs/governance-and-security.md) — artifact, access-control, audit, and telemetry model

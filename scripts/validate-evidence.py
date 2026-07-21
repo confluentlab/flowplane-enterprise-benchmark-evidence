@@ -193,6 +193,55 @@ def check_scaling_and_charts() -> None:
         assert value in soak_svg, f"soak chart missing {value}"
 
 
+def check_live_demo() -> None:
+    manifest_path = ROOT / "evidence/live-demo/video-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["schemaVersion"] == 1
+    assert manifest["status"] == "PASS"
+    assert re.fullmatch(r"[0-9a-f]{40}", manifest["sourceRevision"])
+
+    for media_key in ("video", "poster"):
+        media = manifest[media_key]
+        path = (ROOT / media["path"]).resolve()
+        assert path.is_relative_to(ROOT), f"live demo {media_key} escapes repository root"
+        assert path.is_file(), f"live demo {media_key} missing: {media['path']}"
+        assert digest(path) == media["sha256"], f"live demo {media_key} checksum mismatch"
+
+    video = manifest["video"]
+    assert (ROOT / video["path"]).stat().st_size == video["bytes"]
+    assert video["durationSeconds"] > 19 * 60
+    assert video["width"] == 1920 and video["height"] == 1200
+    assert video["captionMode"].startswith("58 persistent")
+
+    scope = manifest["scope"]
+    assert scope["producerBoundary"] == "flowplane.demo.orders.raw only"
+    assert scope["scriptedDownstreamWrites"] == 0
+    assert {runtime["type"] for runtime in scope["runtimes"]} == {
+        "apache-flink-job",
+        "kafka-connect-mongodb-sink",
+    }
+
+    artifacts = manifest["artifacts"]
+    assert [artifact["version"] for artifact in artifacts] == ["1.0.0", "1.1.0"]
+    for artifact in artifacts:
+        assert re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"])
+        assert artifact["flink"] == {"transformed": 1, "dlq": 1}
+        assert artifact["kafkaConnect"] == {"mongoDocuments": 1, "dlq": 1}
+
+    replay = manifest["runtimeGates"]["connectCandidateReplay"]
+    assert replay["recordsCompared"] == replay["matched"] + replay["expectedDifferences"] + replay["expectedTransformFailures"]
+    assert replay["unexpectedDifferences"] == 0 and replay["contractViolations"] == 0
+    assert manifest["runtimeGates"]["flinkDownstreamSchema"]["status"] == "PASSED"
+
+    chapter_times = [chapter["atSeconds"] for chapter in manifest["chapters"]]
+    assert chapter_times == sorted(chapter_times)
+    assert chapter_times[-1] < video["durationSeconds"]
+
+    documentation = (ROOT / manifest["documentation"]).read_text(encoding="utf-8")
+    assert manifest["runId"] in documentation
+    assert video["sha256"] in documentation
+
+
 def check_document_links() -> None:
     link_pattern = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
     failures: list[str] = []
@@ -215,5 +264,6 @@ if __name__ == "__main__":
     check_soak()
     check_parity()
     check_scaling_and_charts()
+    check_live_demo()
     check_document_links()
-    print("Evidence validation passed: checksums, claims, statuses, manifest, qualification, accounting, parity, charts, and links.")
+    print("Evidence validation passed: checksums, claims, statuses, manifest, qualification, accounting, parity, charts, live-demo provenance, and links.")

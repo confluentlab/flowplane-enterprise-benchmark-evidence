@@ -2,6 +2,7 @@
 
 | Evidence set | Captured | Classification | Status | Primary artifacts |
 |---|---|---|---|---|
+| Governed Connect + Flink walkthrough | 2026-07-20 | Captioned local live run | `PASS` within the documented two-runtime scope | [walkthrough](../docs/live-demo.md), [video](../assets/flowplane-live-screen-demo-motion.mp4), [provenance](live-demo/video-manifest.json) |
 | Core engine, 1 MiB | 2026-07-17 | Controlled JMH | `MEASURED_NOT_QUALIFIED` | [summary](core-engine/summary.md), [results](core-engine/results.csv), [qualification](core-engine/qualification-results.json) |
 | Payload scaling, 1–64 MiB | 2026-07-18 | Controlled JMH | `MEASURED` | [summary](payload-scaling/summary.md), [results](payload-scaling/results.csv), [regression](payload-scaling/regression.json) |
 | Kafka/Flink soak | 2026-07-11 | Local Docker live run | `LIVE_LOCAL_VERIFIED` | [summary](kafka-soak/summary.md), [producer](kafka-soak/producer-results.json), [consumer](kafka-soak/consumer-results.json) |
