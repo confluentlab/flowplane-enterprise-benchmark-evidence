@@ -241,11 +241,19 @@ def check_live_demo() -> None:
     assert manifest["runId"] in documentation
     assert video["sha256"] in documentation
 
-    pipeline = manifest["generationPipeline"]
+    pipeline = manifest["operationalProofPipeline"]
     assert pipeline["classification"] == "SOURCE_INSPECTED"
     assert pipeline["exactExecutionTimeSnapshotClaimed"] is False
-    for key in ("documentation", "orchestration", "renderer", "composition", "narrationCues", "resolvedCaptions", "sourceSnapshot"):
-        assert (ROOT / pipeline[key]).is_file(), f"live demo generation pipeline path missing: {pipeline[key]}"
+    pipeline_file_keys = (
+        "documentation", "commonLibrary", "prepare", "reset", "writeBoundary",
+        "createV1", "connectRegistration", "flinkRegistration", "verifyIdle",
+        "deployV1", "produceV1", "createV2", "deployV2", "produceV2",
+        "finalReport", "runtimeState", "sourceSnapshot",
+    )
+    for key in pipeline_file_keys:
+        assert (ROOT / pipeline[key]).is_file(), f"live demo operational pipeline path missing: {pipeline[key]}"
+    for relative in pipeline["mappings"] + pipeline["payloads"]:
+        assert (ROOT / relative).is_file(), f"live demo operational fixture missing: {relative}"
 
     snapshot_path = ROOT / pipeline["sourceSnapshot"]
     snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
@@ -256,21 +264,66 @@ def check_live_demo() -> None:
     published_root = snapshot_path.parent
     published_paths: set[str] = set()
     for published in snapshot["publishedFiles"]:
-        assert published["path"] not in published_paths, f"duplicate video source snapshot path: {published['path']}"
+        assert published["path"] not in published_paths, f"duplicate operational source snapshot path: {published['path']}"
         published_path = (published_root / published["path"]).resolve()
-        assert published_path.is_relative_to(published_root), f"video source snapshot path escapes its root: {published['path']}"
-        assert published_path.is_file(), f"video source snapshot file missing: {published['path']}"
-        assert digest(published_path) == published["sha256"], f"video source snapshot checksum mismatch: {published['path']}"
+        assert published_path.is_relative_to(published_root), f"operational source snapshot path escapes its root: {published['path']}"
+        assert published_path.is_file(), f"operational source snapshot file missing: {published['path']}"
+        assert digest(published_path) == published["sha256"], f"operational source snapshot checksum mismatch: {published['path']}"
         published_paths.add(published["path"])
 
-    cues = json.loads((ROOT / pipeline["narrationCues"]).read_text(encoding="utf-8-sig"))
-    captions = json.loads((ROOT / pipeline["resolvedCaptions"]).read_text(encoding="utf-8-sig"))
-    assert len(cues) == len(captions) == 58
-    caption_starts = [caption["startMs"] for caption in captions]
-    assert caption_starts == sorted(caption_starts)
-    assert captions[0]["startMs"] == 0
-    assert captions[-1]["endMs"] <= round(video["durationSeconds"] * 1000)
-    assert all(caption["startMs"] < caption["endMs"] for caption in captions)
+    operational_root = snapshot_path.parent
+    assert len(published_paths) == 21
+    assert {Path(path).parts[0] for path in published_paths} == {"scripts", "fixtures"}
+
+    v1_mapping = (ROOT / pipeline["mappings"][0]).read_text(encoding="utf-8-sig")
+    v2_mapping = (ROOT / pipeline["mappings"][1]).read_text(encoding="utf-8-sig")
+    for mapping in (v1_mapping, v2_mapping):
+        assert "on_transformation_error: ROUTE_TO_DLQ" in mapping
+        assert "on_validation_failure: ROUTE_TO_DLQ" in mapping
+        assert "eventId:" in mapping and "required: true" in mapping
+    for addition in ("customerRiskBand:", "runtimeMetadataField:"):
+        assert addition not in v1_mapping and addition in v2_mapping
+    assert "mappingSchemaVersion:" in v1_mapping and "mappingSchemaVersion:" in v2_mapping
+
+    payloads = [json.loads((ROOT / relative).read_text(encoding="utf-8-sig")) for relative in pipeline["payloads"]]
+    expected_payloads = (
+        ("v1.0.0", "evt-live-v1-1001"),
+        ("v1.0.0", ""),
+        ("v1.1.0", "evt-live-v2-1001"),
+        ("v1.1.0", ""),
+    )
+    for payload, (version, event_id) in zip(payloads, expected_payloads, strict=True):
+        assert payload["run"]["id"] == manifest["runId"]
+        assert payload["run"]["schemaVersion"] == version
+        assert payload["event"]["id"] == event_id
+        assert len(payload["wide"]) == 1000
+        assert len(payload["demo"]["padding"]) == 420
+
+    runtime_state = json.loads((ROOT / pipeline["runtimeState"]).read_text(encoding="utf-8-sig"))
+    assert runtime_state["runId"] == manifest["runId"]
+    assert runtime_state["rawTopic"] == "flowplane.demo.orders.raw"
+    assert runtime_state["v1ArtifactHash"].removeprefix("sha256:") == artifacts[0]["sha256"]
+    assert runtime_state["v2ArtifactHash"].removeprefix("sha256:") == artifacts[1]["sha256"]
+
+    script_text = {
+        path.name: path.read_text(encoding="utf-8-sig")
+        for path in sorted((operational_root / "scripts").glob("*")) if path.is_file()
+    }
+    producer_calls = [
+        (name, match.group(1))
+        for name, content in script_text.items()
+        for match in re.finditer(r"Write-FlowplaneKafkaRecords\s+-Topic\s+([^\s]+)", content)
+    ]
+    assert producer_calls == [
+        ("05-produce-and-verify-v1.ps1", "$rawTopic"),
+        ("08-produce-and-verify-v2.ps1", "$state.rawTopic"),
+    ]
+    assert all(
+        "mongoimport" not in content.lower()
+        for name, content in script_text.items()
+        if name != "assert-runtime-write-boundary.ps1"
+    )
+    assert "'(?i)\\bmongoimport\\b'" in script_text["assert-runtime-write-boundary.ps1"]
 
 
 def check_document_links() -> None:

@@ -25,7 +25,7 @@ The run demonstrates:
 - approval, publication, and assignment of mapping version 1.0.0;
 - one valid and one invalid raw event processed independently by each runtime;
 - runtime-created transformed output, structured DLQ outcomes, and Mongo sink output;
-- publication of mapping version 1.1.0 with three visible schema additions;
+- publication of mapping version 1.1.0 with two new output fields and an updated schema-version value;
 - a completed Connect candidate replay with no unexpected differences or contract violations;
 - a passed Flink downstream schema compatibility check;
 - gated deployment and runtime verification of version 1.1.0; and
@@ -40,7 +40,7 @@ The run demonstrates:
 | [02:28](../assets/flowplane-live-screen-demo-motion.mp4#t=148) | Register Flink | Visible job-submission command, logical runtime, and physical execution identity |
 | [03:52](../assets/flowplane-live-screen-demo-motion.mp4#t=232) | Govern and deploy v1 | Simulation, intentional validation failure, publication, and two-runtime assignment |
 | [07:14](../assets/flowplane-live-screen-demo-motion.mp4#t=434) | Verify v1 runtime processing | Raw-only producer, Flink transformed/DLQ records, Connect DLQ, and Mongo document |
-| [10:58](../assets/flowplane-live-screen-demo-motion.mp4#t=658) | Publish v2 | Version 1.1.0, immutable artifact identity, and three visible output additions |
+| [10:58](../assets/flowplane-live-screen-demo-motion.mp4#t=658) | Publish v2 | Version 1.1.0, immutable artifact identity, two new fields, and the updated schema-version value |
 | [11:30](../assets/flowplane-live-screen-demo-motion.mp4#t=690) | Connect candidate replay | Historical raw-input evaluation inside the connector wrapper |
 | [12:20](../assets/flowplane-live-screen-demo-motion.mp4#t=740) | Flink schema gate | Candidate comparison and the live job's downstream compatibility result |
 | [12:58](../assets/flowplane-live-screen-demo-motion.mp4#t=778) | Deploy and verify v2 | Gated assignment, raw-only v2 inputs, runtime-owned outputs, and updated Mongo document |
@@ -61,15 +61,17 @@ raw-only producer
 
 The control plane manages artifact publication and assignment. The separately deployed runtimes poll for assigned artifacts, verify and execute them in the data plane, and report bounded telemetry and lifecycle state. Production payload processing does not need to traverse the control plane.
 
-For version 1.0.0, the preserved run summary records one transformed and one DLQ outcome from Flink, plus one Mongo document and one DLQ outcome from Kafka Connect. Version 1.1.0 repeats that valid/invalid pattern and visibly adds `customerRiskBand`, `mappingSchemaVersion`, and `runtimeMetadataField` to the successful output.
+For version 1.0.0, the preserved run summary records one transformed and one DLQ outcome from Flink, plus one Mongo document and one DLQ outcome from Kafka Connect. Version 1.1.0 repeats that valid/invalid pattern, adds `customerRiskBand` and `runtimeMetadataField`, and changes the existing `mappingSchemaVersion` value from `v1.0.0` to `v1.1.0`.
 
 The Connect replay gate evaluated two historical records. Its recorded result contained one expected schema difference and one expected transform failure from the invalid fixture, with zero unexpected differences and zero contract violations. “Completed replay” therefore describes the compatibility gate result; it does not mean that every historical input transformed successfully.
 
-## How the video was produced
+## Scripts, mappings, and payloads behind the run
 
-The repository includes the [video-generation pipeline](../reproduction/live-demo-video/README.md) for reviewers who want to inspect how the final media was assembled. The preserved material includes the [top-level orchestration script](../reproduction/live-demo-video/orchestration/10-generate-demo-video.ps1), [evidence-gated renderer](../reproduction/live-demo-video/remotion-motion/render-motion-video.ps1), [Remotion composition](../reproduction/live-demo-video/remotion-motion/src/Composition.tsx), [58 narration cues](../reproduction/live-demo-video/remotion-motion/narration-cues.json), and [resolved caption timeline](../reproduction/live-demo-video/detailed-narration-captions.json).
+The repository includes the [operational Flowplane pipeline](../reproduction/live-demo-flowplane/README.md) for reviewers who want to inspect what actually changed system state. It covers environment preparation, mapping v1 and v2 governance, Kafka Connect and Flink registration, artifact deployment, raw-topic production, replay and schema gates, downstream verification, and final evidence assembly.
 
-The rendering layer adds explanatory graphics and captions only. It does not replace, synthesize, or alter the live runtime results shown underneath. The copied pipeline is classified `SOURCE_INSPECTED` because the source worktree was dirty and execution-time script hashes were not captured; the exact boundary is recorded in its [source snapshot](../reproduction/live-demo-video/source-snapshot.json).
+The same directory preserves the [v1 mapping](../reproduction/live-demo-flowplane/fixtures/mapping-v1.yaml), [v2 mapping](../reproduction/live-demo-flowplane/fixtures/mapping-v2.yaml), [valid and invalid payloads](../reproduction/live-demo-flowplane/README.md#mapping-and-payload-fixtures), and [runtime/topic state](../reproduction/live-demo-flowplane/fixtures/runtime-and-topic-state.json). Video-rendering, motion, caption, and narration sources are intentionally excluded.
+
+The copied operational pipeline is classified `SOURCE_INSPECTED` because its source worktree was dirty and execution-time script hashes were not captured. The exact collection state and fixture derivation are recorded in the [source snapshot](../reproduction/live-demo-flowplane/source-snapshot.json).
 
 ## Artifact and recording identity
 

@@ -62,7 +62,7 @@ Read [Architecture](docs/architecture.md), [How it works](docs/how-it-works.md),
 
 The [19½-minute captioned walkthrough](assets/flowplane-live-screen-demo-motion.mp4) follows one mapping through simulation, approval, publication, deployment, runtime processing, failure handling, version evolution, compatibility gates, telemetry, and audit history. One Kafka Connect Mongo sink and one Flink job independently process the same raw Kafka inputs. The producer scripts write only to the raw topic; the runtimes create the transformed, DLQ, and Mongo results shown in the recording.
 
-Read the [scene-by-scene walkthrough and proof boundary](docs/live-demo.md), inspect its [provenance manifest](evidence/live-demo/video-manifest.json), or review [how the video was produced](reproduction/live-demo-video/README.md).
+Read the [scene-by-scene walkthrough and proof boundary](docs/live-demo.md), inspect its [provenance manifest](evidence/live-demo/video-manifest.json), or review the [operational scripts, mappings, and payloads](reproduction/live-demo-flowplane/README.md) behind the run.
 
 ## Execution modes
 

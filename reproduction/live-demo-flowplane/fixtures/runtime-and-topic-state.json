@@ -1,0 +1,50 @@
+﻿{
+    "runId":  "flowplane-live-demo-20260720T110755Z-894bc2cb",
+    "tenantId":  "acme-corp",
+    "topicPrefix":  "flowplane.demo",
+    "rawTopic":  "flowplane.demo.orders.raw",
+    "transformedTopic":  "flowplane.demo.orders.flink.transformed",
+    "dlqTopic":  "flowplane.demo.orders.flink.dlq",
+    "runtimeIds":  [
+                       "flowplane-live-demo-flink",
+                       "flowplane-live-demo-kafka-connect"
+                   ],
+    "runtimeTargets":  [
+                           {
+                               "runtimeId":  "flowplane-live-demo-flink",
+                               "name":  "Orders enrichment Flink job",
+                               "type":  "FLINK",
+                               "transport":  "FLINK",
+                               "inputTopic":  "flowplane.demo.orders.raw",
+                               "outputTopic":  "flowplane.demo.orders.flink.transformed",
+                               "dlqTopic":  "flowplane.demo.orders.flink.dlq",
+                               "downstreamKind":  "kafka",
+                               "containerName":  "flowplane-live-demo-flink-submit",
+                               "taskManagerContainerName":  "flowplane-live-demo-flink-taskmanager",
+                               "startupKind":  "flink"
+                           },
+                           {
+                               "runtimeId":  "flowplane-live-demo-kafka-connect",
+                               "name":  "Orders Mongo sink connector",
+                               "type":  "KAFKA_CONNECT_SMT",
+                               "transport":  "KAFKA_CONNECT",
+                               "inputTopic":  "flowplane.demo.orders.raw",
+                               "outputTopic":  "mongodb://flowplane_sink.flowplane_demo_orders_connect",
+                               "dlqTopic":  "flowplane.demo.orders.connect.dlq",
+                               "downstreamKind":  "mongo",
+                               "connectorName":  "flowplane-live-demo-mongo-sink",
+                               "mongoDatabase":  "flowplane_sink",
+                               "mongoCollection":  "flowplane_demo_orders_connect",
+                               "startupKind":  "kafka-connect"
+                           }
+                       ],
+    "mappingId":  "6a5e03bf0c305eb209b46297",
+    "mappingName":  "flowplane-live-demo-orders-flowplane-live-demo-20260720T110755Z-894bc2cb",
+    "v1ArtifactId":  "6a5e03c00c305eb209b462a3",
+    "v1ArtifactHash":  "sha256:bcd0e68c98032a6eef6ee610cef82538a73cf607a077365cbf56d2c4a51d7ad9",
+    "v1Version":  "v1.0.0",
+    "v1DeploymentStatus":  "ACTIVE",
+    "v2ArtifactId":  "6a5e055a0c305eb209b4634c",
+    "v2ArtifactHash":  "sha256:1919e736455fa02b2ff0bfcfa71abcc9040bd29a90eded897ffe8bbe603b8835",
+    "v2Version":  "v1.1.0"
+}

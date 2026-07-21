@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "classification": "SOURCE_INSPECTED",
+  "collectedAt": "2026-07-21",
+  "relatedRunId": "flowplane-live-demo-20260720T110755Z-894bc2cb",
+  "reportedSourceRevision": "10a26df4d7ed6a41f8076a5d7280d73db543c13a",
+  "sourceWorktree": {
+    "state": "dirty",
+    "executionTimeScriptDigestsCaptured": false,
+    "exactExecutionTimeSnapshotClaimed": false,
+    "modifiedFilesAtCollection": [
+      "scripts/demo/01-reset-demo-state.ps1",
+      "scripts/demo/02-create-approve-publish-mapping-v1.ps1",
+      "scripts/demo/04-deploy-v1-to-runtimes.ps1",
+      "scripts/demo/05-produce-and-verify-v1.ps1",
+      "scripts/demo/06-create-approve-publish-mapping-v2.ps1",
+      "scripts/demo/07-deploy-v2-to-runtimes.ps1",
+      "scripts/demo/08-produce-and-verify-v2.ps1",
+      "scripts/demo/09-generate-demo-evidence-report.ps1",
+      "scripts/demo/FlowplaneDemo.Common.ps1"
+    ],
+    "untrackedFilesAtCollection": [
+      "scripts/demo/00-prepare-connect-flink-demo.ps1",
+      "scripts/demo/03-apply-connect-ui-registration.ps1",
+      "scripts/demo/03-register-flink-job.ps1",
+      "scripts/demo/03-verify-idle-runtimes.ps1",
+      "scripts/demo/assert-runtime-write-boundary.ps1"
+    ]
+  },
+  "publicationAdjustments": [
+    "Normalized published text to LF and removed redundant terminal blank lines.",
+    "Formatted extracted JSON payloads for human review without changing their parsed values."
+  ],
+  "fixtureDerivation": {
+    "mapping-v1.yaml": "mapping.mappingDsl from mapping-v1-create-publish-report.json; LF-normalized",
+    "mapping-v2.yaml": "mapping.mappingDsl from mapping-v2-create-publish-report.json; LF-normalized",
+    "payload-v1-valid.json": "mapping.samplePayload from mapping-v1-create-publish-report.json; formatted for review",
+    "payload-v1-invalid.json": "second preserved raw record from v1-output-report.json; formatted for review",
+    "payload-v2-valid.json": "mapping.samplePayload from mapping-v2-create-publish-report.json; formatted for review",
+    "payload-v2-invalid.json": "reconstructed from the v2 sample with an empty event.id, matching New-FlowplaneDemoPayload -Invalid -SchemaVersion v1.1.0; execution-time bytes were not separately preserved",
+    "runtime-and-topic-state.json": "demo-state.json from the completed run; LF-normalized"
+  },
+  "publishedFiles": [
+    { "path": "fixtures/mapping-v1.yaml", "sha256": "d73384c17a02c1636f57fe83263e020c1018c56e67ffa1e2fb49687e68ed3f56" },
+    { "path": "fixtures/mapping-v2.yaml", "sha256": "f8e7fb5205da3fa2ada29412e08b28b0f1e47442d5e4d3e6a502c70e4c948440" },
+    { "path": "fixtures/payload-v1-invalid.json", "sha256": "7d8c30b1a9cb02e68db3f55db0c47bdbd852c97814cea4115f7916f8c0a91f56" },
+    { "path": "fixtures/payload-v1-valid.json", "sha256": "c84c51187c00b7c9064b8415532045feae212dc630fc382ae212d95728dbc8f3" },
+    { "path": "fixtures/payload-v2-invalid.json", "sha256": "096cf09e06c027add92a35781ba4f67f509ec9deaf68018c12cd401923cff15d" },
+    { "path": "fixtures/payload-v2-valid.json", "sha256": "fe502b73adf7558a43fe217949175cf12c5778c11f6c2091655ad88be538c1f1" },
+    { "path": "fixtures/runtime-and-topic-state.json", "sha256": "6781fe4d63ddab15b5141f8907587e4a0d04603e36474f1bd3be65c8a3037b83" },
+    { "path": "scripts/00-prepare-connect-flink-demo.ps1", "sha256": "353093b82220d9b447f6c4bf44d7b3792df23438796ef7ea3ff40bdb2f2afc2d" },
+    { "path": "scripts/01-reset-demo-state.ps1", "sha256": "448106842002fe413fe9859973a9ae68372edb72e0c6c6be9ce242fed3e2ec5b" },
+    { "path": "scripts/02-create-approve-publish-mapping-v1.ps1", "sha256": "fc1d8cd00113f74648ab425e8db07b28f3d8a58876ce99d3712116d506b01ca7" },
+    { "path": "scripts/03-apply-connect-ui-registration.ps1", "sha256": "22ab8aedf6e37e65ba152f6df7b2118acdac6704783e63ae333f8a4790733d15" },
+    { "path": "scripts/03-register-flink-job.ps1", "sha256": "7a5b7beb1661a648eb64472eee2b94bc1095516527d8490025b136099801dc75" },
+    { "path": "scripts/03-verify-idle-runtimes.ps1", "sha256": "bbc18f3b5b1dbfadbf7809c47ffe9517607149f4d21a0e8623a287ce0edde1fe" },
+    { "path": "scripts/04-deploy-v1-to-runtimes.ps1", "sha256": "94dc4eb64a48ef557b28c433dbc73c6a099c2a1d8eda6a4fad97b65b402cb290" },
+    { "path": "scripts/05-produce-and-verify-v1.ps1", "sha256": "8dd0a0ecc0a980c9f6a70c230c3ceb0c8f7c5d9c7a427acf2dbd4967f9973b4c" },
+    { "path": "scripts/06-create-approve-publish-mapping-v2.ps1", "sha256": "5311488f70b9a9b42fb9c9d6a8b5f98c83bea6e42d99a2088a55d3b1f76ef9a8" },
+    { "path": "scripts/07-deploy-v2-to-runtimes.ps1", "sha256": "65fbbec15405ad3433434a36eb88e8aaa01c2b680501126f66ab76a12bd1e79b" },
+    { "path": "scripts/08-produce-and-verify-v2.ps1", "sha256": "99673346ac7a77299e3f8894e21069b393081f7d6fbbc99b01fe116549d899f1" },
+    { "path": "scripts/09-generate-demo-evidence-report.ps1", "sha256": "57d4eae8c2a0e898ea8776b3fd95d18b5af8273d199e6d8523322734c06cd0e9" },
+    { "path": "scripts/assert-runtime-write-boundary.ps1", "sha256": "27b681c0e75580dbcf37bba56bac86c4e0524c9db1e07e894daa6d91f88a0162" },
+    { "path": "scripts/FlowplaneDemo.Common.ps1", "sha256": "4e74e1cfcd294a7e24cc9b97a524cdba9c909e0e862c1da23cf26b93fd1b6899" }
+  ]
+}

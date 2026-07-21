@@ -1,0 +1,2056 @@
+﻿version: 1
+name: flowplane-live-demo-orders-flowplane-live-demo-20260720T110755Z-894bc2cb
+error_policy:
+  on_transformation_error: ROUTE_TO_DLQ
+  on_validation_failure: ROUTE_TO_DLQ
+  on_type_mismatch: ROUTE_TO_DLQ
+output:
+  shape: FLAT_OBJECT
+  complexTypes: NATIVE_JSON
+  fieldNaming: AS_IS
+lookups:
+  statusCode:
+    submitted: ACCEPTED
+    cancelled: CANCELLED
+  riskBand:
+    LOW: LOW
+    MEDIUM: MEDIUM
+    HIGH: HIGH
+fields:
+  demoRunId:
+    path: $.run.id
+    required: true
+  eventId:
+    path: $.event.id
+    required: true
+    validate:
+      required: true
+      pattern: "^evt-"
+  customerRiskBand:
+    path: $.customer.risk
+    lookup:
+      dictionary: riskBand
+  orderId:
+    path: $.order.id
+    required: true
+  customerTier:
+    path: $.customer.tier
+    case_convert: upper
+  normalizedStatus:
+    path: $.order.status
+    lookup:
+      dictionary: statusCode
+  orderAmountDouble:
+    path: $.order.amount
+    cast: double
+  amountRounded:
+    path: $.order.amount
+    cast: decimal
+    decimalScale: 2
+    decimalScalePolicy: ROUND
+  eventTypeUpper:
+    path: $.event.type
+    case_convert: upper
+  eventTypeLower:
+    path: $.event.type
+    case_convert: lower
+  receivedAt:
+    path: $.event.ts
+    cast: timestamp
+  region:
+    path: $.tenant.missingRegion
+    fallback:
+      - $.tenant.region
+  runtimeConstant:
+    constant: Flowplane-live-demo
+  customerLabel:
+    valueExpr:
+      function:
+        name: concat
+        args:
+          - path: $.customer.id
+          - const: "-"
+          - path: $.customer.tier
+  statusRoute:
+    valueExpr:
+      case:
+        branches:
+          - when:
+              path: $.metrics.risk
+              operator: eq
+              value: HIGH
+            then:
+              const: page-oncall
+        else:
+          const: observe
+  labelParts:
+    path: $.packet.labels
+    split:
+      by: "|"
+  normalizedMessage:
+    path: $.packet.message
+    normalize_string: true
+  loadPlusTen:
+    arithmetic: "$.metrics.load + 10"
+  hugeIntClamped:
+    path: $.metrics.huge
+    cast: int
+    onOverflow: CLAMP
+  badIntDefault:
+    path: $.metrics.badInt
+    cast: int
+    onTypeMismatch: DEFAULT
+    default: -1
+  customerEmailMasked:
+    path: $.customer.email
+    mask: last4
+  customerSsnHashed:
+    path: $.customer.ssn
+    hash: sha256
+  traceHash:
+    path: $.event.trace
+    hash: sha256
+  mappingSchemaVersion:
+    path: $.demo.mappingSchemaVersion
+  runtimeMetadataField:
+    constant: v2-runtime-visible
+  wideField0001:
+    path: $.wide.field0001
+  wideField0002:
+    path: $.wide.field0002
+  wideField0003:
+    path: $.wide.field0003
+  wideField0004:
+    path: $.wide.field0004
+  wideField0005:
+    path: $.wide.field0005
+  wideField0006:
+    path: $.wide.field0006
+  wideField0007:
+    path: $.wide.field0007
+  wideField0008:
+    path: $.wide.field0008
+  wideField0009:
+    path: $.wide.field0009
+  wideField0010:
+    path: $.wide.field0010
+  wideField0011:
+    path: $.wide.field0011
+  wideField0012:
+    path: $.wide.field0012
+  wideField0013:
+    path: $.wide.field0013
+  wideField0014:
+    path: $.wide.field0014
+  wideField0015:
+    path: $.wide.field0015
+  wideField0016:
+    path: $.wide.field0016
+  wideField0017:
+    path: $.wide.field0017
+  wideField0018:
+    path: $.wide.field0018
+  wideField0019:
+    path: $.wide.field0019
+  wideField0020:
+    path: $.wide.field0020
+  wideField0021:
+    path: $.wide.field0021
+  wideField0022:
+    path: $.wide.field0022
+  wideField0023:
+    path: $.wide.field0023
+  wideField0024:
+    path: $.wide.field0024
+  wideField0025:
+    path: $.wide.field0025
+  wideField0026:
+    path: $.wide.field0026
+  wideField0027:
+    path: $.wide.field0027
+  wideField0028:
+    path: $.wide.field0028
+  wideField0029:
+    path: $.wide.field0029
+  wideField0030:
+    path: $.wide.field0030
+  wideField0031:
+    path: $.wide.field0031
+  wideField0032:
+    path: $.wide.field0032
+  wideField0033:
+    path: $.wide.field0033
+  wideField0034:
+    path: $.wide.field0034
+  wideField0035:
+    path: $.wide.field0035
+  wideField0036:
+    path: $.wide.field0036
+  wideField0037:
+    path: $.wide.field0037
+  wideField0038:
+    path: $.wide.field0038
+  wideField0039:
+    path: $.wide.field0039
+  wideField0040:
+    path: $.wide.field0040
+  wideField0041:
+    path: $.wide.field0041
+  wideField0042:
+    path: $.wide.field0042
+  wideField0043:
+    path: $.wide.field0043
+  wideField0044:
+    path: $.wide.field0044
+  wideField0045:
+    path: $.wide.field0045
+  wideField0046:
+    path: $.wide.field0046
+  wideField0047:
+    path: $.wide.field0047
+  wideField0048:
+    path: $.wide.field0048
+  wideField0049:
+    path: $.wide.field0049
+  wideField0050:
+    path: $.wide.field0050
+  wideField0051:
+    path: $.wide.field0051
+  wideField0052:
+    path: $.wide.field0052
+  wideField0053:
+    path: $.wide.field0053
+  wideField0054:
+    path: $.wide.field0054
+  wideField0055:
+    path: $.wide.field0055
+  wideField0056:
+    path: $.wide.field0056
+  wideField0057:
+    path: $.wide.field0057
+  wideField0058:
+    path: $.wide.field0058
+  wideField0059:
+    path: $.wide.field0059
+  wideField0060:
+    path: $.wide.field0060
+  wideField0061:
+    path: $.wide.field0061
+  wideField0062:
+    path: $.wide.field0062
+  wideField0063:
+    path: $.wide.field0063
+  wideField0064:
+    path: $.wide.field0064
+  wideField0065:
+    path: $.wide.field0065
+  wideField0066:
+    path: $.wide.field0066
+  wideField0067:
+    path: $.wide.field0067
+  wideField0068:
+    path: $.wide.field0068
+  wideField0069:
+    path: $.wide.field0069
+  wideField0070:
+    path: $.wide.field0070
+  wideField0071:
+    path: $.wide.field0071
+  wideField0072:
+    path: $.wide.field0072
+  wideField0073:
+    path: $.wide.field0073
+  wideField0074:
+    path: $.wide.field0074
+  wideField0075:
+    path: $.wide.field0075
+  wideField0076:
+    path: $.wide.field0076
+  wideField0077:
+    path: $.wide.field0077
+  wideField0078:
+    path: $.wide.field0078
+  wideField0079:
+    path: $.wide.field0079
+  wideField0080:
+    path: $.wide.field0080
+  wideField0081:
+    path: $.wide.field0081
+  wideField0082:
+    path: $.wide.field0082
+  wideField0083:
+    path: $.wide.field0083
+  wideField0084:
+    path: $.wide.field0084
+  wideField0085:
+    path: $.wide.field0085
+  wideField0086:
+    path: $.wide.field0086
+  wideField0087:
+    path: $.wide.field0087
+  wideField0088:
+    path: $.wide.field0088
+  wideField0089:
+    path: $.wide.field0089
+  wideField0090:
+    path: $.wide.field0090
+  wideField0091:
+    path: $.wide.field0091
+  wideField0092:
+    path: $.wide.field0092
+  wideField0093:
+    path: $.wide.field0093
+  wideField0094:
+    path: $.wide.field0094
+  wideField0095:
+    path: $.wide.field0095
+  wideField0096:
+    path: $.wide.field0096
+  wideField0097:
+    path: $.wide.field0097
+  wideField0098:
+    path: $.wide.field0098
+  wideField0099:
+    path: $.wide.field0099
+  wideField0100:
+    path: $.wide.field0100
+  wideField0101:
+    path: $.wide.field0101
+  wideField0102:
+    path: $.wide.field0102
+  wideField0103:
+    path: $.wide.field0103
+  wideField0104:
+    path: $.wide.field0104
+  wideField0105:
+    path: $.wide.field0105
+  wideField0106:
+    path: $.wide.field0106
+  wideField0107:
+    path: $.wide.field0107
+  wideField0108:
+    path: $.wide.field0108
+  wideField0109:
+    path: $.wide.field0109
+  wideField0110:
+    path: $.wide.field0110
+  wideField0111:
+    path: $.wide.field0111
+  wideField0112:
+    path: $.wide.field0112
+  wideField0113:
+    path: $.wide.field0113
+  wideField0114:
+    path: $.wide.field0114
+  wideField0115:
+    path: $.wide.field0115
+  wideField0116:
+    path: $.wide.field0116
+  wideField0117:
+    path: $.wide.field0117
+  wideField0118:
+    path: $.wide.field0118
+  wideField0119:
+    path: $.wide.field0119
+  wideField0120:
+    path: $.wide.field0120
+  wideField0121:
+    path: $.wide.field0121
+  wideField0122:
+    path: $.wide.field0122
+  wideField0123:
+    path: $.wide.field0123
+  wideField0124:
+    path: $.wide.field0124
+  wideField0125:
+    path: $.wide.field0125
+  wideField0126:
+    path: $.wide.field0126
+  wideField0127:
+    path: $.wide.field0127
+  wideField0128:
+    path: $.wide.field0128
+  wideField0129:
+    path: $.wide.field0129
+  wideField0130:
+    path: $.wide.field0130
+  wideField0131:
+    path: $.wide.field0131
+  wideField0132:
+    path: $.wide.field0132
+  wideField0133:
+    path: $.wide.field0133
+  wideField0134:
+    path: $.wide.field0134
+  wideField0135:
+    path: $.wide.field0135
+  wideField0136:
+    path: $.wide.field0136
+  wideField0137:
+    path: $.wide.field0137
+  wideField0138:
+    path: $.wide.field0138
+  wideField0139:
+    path: $.wide.field0139
+  wideField0140:
+    path: $.wide.field0140
+  wideField0141:
+    path: $.wide.field0141
+  wideField0142:
+    path: $.wide.field0142
+  wideField0143:
+    path: $.wide.field0143
+  wideField0144:
+    path: $.wide.field0144
+  wideField0145:
+    path: $.wide.field0145
+  wideField0146:
+    path: $.wide.field0146
+  wideField0147:
+    path: $.wide.field0147
+  wideField0148:
+    path: $.wide.field0148
+  wideField0149:
+    path: $.wide.field0149
+  wideField0150:
+    path: $.wide.field0150
+  wideField0151:
+    path: $.wide.field0151
+  wideField0152:
+    path: $.wide.field0152
+  wideField0153:
+    path: $.wide.field0153
+  wideField0154:
+    path: $.wide.field0154
+  wideField0155:
+    path: $.wide.field0155
+  wideField0156:
+    path: $.wide.field0156
+  wideField0157:
+    path: $.wide.field0157
+  wideField0158:
+    path: $.wide.field0158
+  wideField0159:
+    path: $.wide.field0159
+  wideField0160:
+    path: $.wide.field0160
+  wideField0161:
+    path: $.wide.field0161
+  wideField0162:
+    path: $.wide.field0162
+  wideField0163:
+    path: $.wide.field0163
+  wideField0164:
+    path: $.wide.field0164
+  wideField0165:
+    path: $.wide.field0165
+  wideField0166:
+    path: $.wide.field0166
+  wideField0167:
+    path: $.wide.field0167
+  wideField0168:
+    path: $.wide.field0168
+  wideField0169:
+    path: $.wide.field0169
+  wideField0170:
+    path: $.wide.field0170
+  wideField0171:
+    path: $.wide.field0171
+  wideField0172:
+    path: $.wide.field0172
+  wideField0173:
+    path: $.wide.field0173
+  wideField0174:
+    path: $.wide.field0174
+  wideField0175:
+    path: $.wide.field0175
+  wideField0176:
+    path: $.wide.field0176
+  wideField0177:
+    path: $.wide.field0177
+  wideField0178:
+    path: $.wide.field0178
+  wideField0179:
+    path: $.wide.field0179
+  wideField0180:
+    path: $.wide.field0180
+  wideField0181:
+    path: $.wide.field0181
+  wideField0182:
+    path: $.wide.field0182
+  wideField0183:
+    path: $.wide.field0183
+  wideField0184:
+    path: $.wide.field0184
+  wideField0185:
+    path: $.wide.field0185
+  wideField0186:
+    path: $.wide.field0186
+  wideField0187:
+    path: $.wide.field0187
+  wideField0188:
+    path: $.wide.field0188
+  wideField0189:
+    path: $.wide.field0189
+  wideField0190:
+    path: $.wide.field0190
+  wideField0191:
+    path: $.wide.field0191
+  wideField0192:
+    path: $.wide.field0192
+  wideField0193:
+    path: $.wide.field0193
+  wideField0194:
+    path: $.wide.field0194
+  wideField0195:
+    path: $.wide.field0195
+  wideField0196:
+    path: $.wide.field0196
+  wideField0197:
+    path: $.wide.field0197
+  wideField0198:
+    path: $.wide.field0198
+  wideField0199:
+    path: $.wide.field0199
+  wideField0200:
+    path: $.wide.field0200
+  wideField0201:
+    path: $.wide.field0201
+  wideField0202:
+    path: $.wide.field0202
+  wideField0203:
+    path: $.wide.field0203
+  wideField0204:
+    path: $.wide.field0204
+  wideField0205:
+    path: $.wide.field0205
+  wideField0206:
+    path: $.wide.field0206
+  wideField0207:
+    path: $.wide.field0207
+  wideField0208:
+    path: $.wide.field0208
+  wideField0209:
+    path: $.wide.field0209
+  wideField0210:
+    path: $.wide.field0210
+  wideField0211:
+    path: $.wide.field0211
+  wideField0212:
+    path: $.wide.field0212
+  wideField0213:
+    path: $.wide.field0213
+  wideField0214:
+    path: $.wide.field0214
+  wideField0215:
+    path: $.wide.field0215
+  wideField0216:
+    path: $.wide.field0216
+  wideField0217:
+    path: $.wide.field0217
+  wideField0218:
+    path: $.wide.field0218
+  wideField0219:
+    path: $.wide.field0219
+  wideField0220:
+    path: $.wide.field0220
+  wideField0221:
+    path: $.wide.field0221
+  wideField0222:
+    path: $.wide.field0222
+  wideField0223:
+    path: $.wide.field0223
+  wideField0224:
+    path: $.wide.field0224
+  wideField0225:
+    path: $.wide.field0225
+  wideField0226:
+    path: $.wide.field0226
+  wideField0227:
+    path: $.wide.field0227
+  wideField0228:
+    path: $.wide.field0228
+  wideField0229:
+    path: $.wide.field0229
+  wideField0230:
+    path: $.wide.field0230
+  wideField0231:
+    path: $.wide.field0231
+  wideField0232:
+    path: $.wide.field0232
+  wideField0233:
+    path: $.wide.field0233
+  wideField0234:
+    path: $.wide.field0234
+  wideField0235:
+    path: $.wide.field0235
+  wideField0236:
+    path: $.wide.field0236
+  wideField0237:
+    path: $.wide.field0237
+  wideField0238:
+    path: $.wide.field0238
+  wideField0239:
+    path: $.wide.field0239
+  wideField0240:
+    path: $.wide.field0240
+  wideField0241:
+    path: $.wide.field0241
+  wideField0242:
+    path: $.wide.field0242
+  wideField0243:
+    path: $.wide.field0243
+  wideField0244:
+    path: $.wide.field0244
+  wideField0245:
+    path: $.wide.field0245
+  wideField0246:
+    path: $.wide.field0246
+  wideField0247:
+    path: $.wide.field0247
+  wideField0248:
+    path: $.wide.field0248
+  wideField0249:
+    path: $.wide.field0249
+  wideField0250:
+    path: $.wide.field0250
+  wideField0251:
+    path: $.wide.field0251
+  wideField0252:
+    path: $.wide.field0252
+  wideField0253:
+    path: $.wide.field0253
+  wideField0254:
+    path: $.wide.field0254
+  wideField0255:
+    path: $.wide.field0255
+  wideField0256:
+    path: $.wide.field0256
+  wideField0257:
+    path: $.wide.field0257
+  wideField0258:
+    path: $.wide.field0258
+  wideField0259:
+    path: $.wide.field0259
+  wideField0260:
+    path: $.wide.field0260
+  wideField0261:
+    path: $.wide.field0261
+  wideField0262:
+    path: $.wide.field0262
+  wideField0263:
+    path: $.wide.field0263
+  wideField0264:
+    path: $.wide.field0264
+  wideField0265:
+    path: $.wide.field0265
+  wideField0266:
+    path: $.wide.field0266
+  wideField0267:
+    path: $.wide.field0267
+  wideField0268:
+    path: $.wide.field0268
+  wideField0269:
+    path: $.wide.field0269
+  wideField0270:
+    path: $.wide.field0270
+  wideField0271:
+    path: $.wide.field0271
+  wideField0272:
+    path: $.wide.field0272
+  wideField0273:
+    path: $.wide.field0273
+  wideField0274:
+    path: $.wide.field0274
+  wideField0275:
+    path: $.wide.field0275
+  wideField0276:
+    path: $.wide.field0276
+  wideField0277:
+    path: $.wide.field0277
+  wideField0278:
+    path: $.wide.field0278
+  wideField0279:
+    path: $.wide.field0279
+  wideField0280:
+    path: $.wide.field0280
+  wideField0281:
+    path: $.wide.field0281
+  wideField0282:
+    path: $.wide.field0282
+  wideField0283:
+    path: $.wide.field0283
+  wideField0284:
+    path: $.wide.field0284
+  wideField0285:
+    path: $.wide.field0285
+  wideField0286:
+    path: $.wide.field0286
+  wideField0287:
+    path: $.wide.field0287
+  wideField0288:
+    path: $.wide.field0288
+  wideField0289:
+    path: $.wide.field0289
+  wideField0290:
+    path: $.wide.field0290
+  wideField0291:
+    path: $.wide.field0291
+  wideField0292:
+    path: $.wide.field0292
+  wideField0293:
+    path: $.wide.field0293
+  wideField0294:
+    path: $.wide.field0294
+  wideField0295:
+    path: $.wide.field0295
+  wideField0296:
+    path: $.wide.field0296
+  wideField0297:
+    path: $.wide.field0297
+  wideField0298:
+    path: $.wide.field0298
+  wideField0299:
+    path: $.wide.field0299
+  wideField0300:
+    path: $.wide.field0300
+  wideField0301:
+    path: $.wide.field0301
+  wideField0302:
+    path: $.wide.field0302
+  wideField0303:
+    path: $.wide.field0303
+  wideField0304:
+    path: $.wide.field0304
+  wideField0305:
+    path: $.wide.field0305
+  wideField0306:
+    path: $.wide.field0306
+  wideField0307:
+    path: $.wide.field0307
+  wideField0308:
+    path: $.wide.field0308
+  wideField0309:
+    path: $.wide.field0309
+  wideField0310:
+    path: $.wide.field0310
+  wideField0311:
+    path: $.wide.field0311
+  wideField0312:
+    path: $.wide.field0312
+  wideField0313:
+    path: $.wide.field0313
+  wideField0314:
+    path: $.wide.field0314
+  wideField0315:
+    path: $.wide.field0315
+  wideField0316:
+    path: $.wide.field0316
+  wideField0317:
+    path: $.wide.field0317
+  wideField0318:
+    path: $.wide.field0318
+  wideField0319:
+    path: $.wide.field0319
+  wideField0320:
+    path: $.wide.field0320
+  wideField0321:
+    path: $.wide.field0321
+  wideField0322:
+    path: $.wide.field0322
+  wideField0323:
+    path: $.wide.field0323
+  wideField0324:
+    path: $.wide.field0324
+  wideField0325:
+    path: $.wide.field0325
+  wideField0326:
+    path: $.wide.field0326
+  wideField0327:
+    path: $.wide.field0327
+  wideField0328:
+    path: $.wide.field0328
+  wideField0329:
+    path: $.wide.field0329
+  wideField0330:
+    path: $.wide.field0330
+  wideField0331:
+    path: $.wide.field0331
+  wideField0332:
+    path: $.wide.field0332
+  wideField0333:
+    path: $.wide.field0333
+  wideField0334:
+    path: $.wide.field0334
+  wideField0335:
+    path: $.wide.field0335
+  wideField0336:
+    path: $.wide.field0336
+  wideField0337:
+    path: $.wide.field0337
+  wideField0338:
+    path: $.wide.field0338
+  wideField0339:
+    path: $.wide.field0339
+  wideField0340:
+    path: $.wide.field0340
+  wideField0341:
+    path: $.wide.field0341
+  wideField0342:
+    path: $.wide.field0342
+  wideField0343:
+    path: $.wide.field0343
+  wideField0344:
+    path: $.wide.field0344
+  wideField0345:
+    path: $.wide.field0345
+  wideField0346:
+    path: $.wide.field0346
+  wideField0347:
+    path: $.wide.field0347
+  wideField0348:
+    path: $.wide.field0348
+  wideField0349:
+    path: $.wide.field0349
+  wideField0350:
+    path: $.wide.field0350
+  wideField0351:
+    path: $.wide.field0351
+  wideField0352:
+    path: $.wide.field0352
+  wideField0353:
+    path: $.wide.field0353
+  wideField0354:
+    path: $.wide.field0354
+  wideField0355:
+    path: $.wide.field0355
+  wideField0356:
+    path: $.wide.field0356
+  wideField0357:
+    path: $.wide.field0357
+  wideField0358:
+    path: $.wide.field0358
+  wideField0359:
+    path: $.wide.field0359
+  wideField0360:
+    path: $.wide.field0360
+  wideField0361:
+    path: $.wide.field0361
+  wideField0362:
+    path: $.wide.field0362
+  wideField0363:
+    path: $.wide.field0363
+  wideField0364:
+    path: $.wide.field0364
+  wideField0365:
+    path: $.wide.field0365
+  wideField0366:
+    path: $.wide.field0366
+  wideField0367:
+    path: $.wide.field0367
+  wideField0368:
+    path: $.wide.field0368
+  wideField0369:
+    path: $.wide.field0369
+  wideField0370:
+    path: $.wide.field0370
+  wideField0371:
+    path: $.wide.field0371
+  wideField0372:
+    path: $.wide.field0372
+  wideField0373:
+    path: $.wide.field0373
+  wideField0374:
+    path: $.wide.field0374
+  wideField0375:
+    path: $.wide.field0375
+  wideField0376:
+    path: $.wide.field0376
+  wideField0377:
+    path: $.wide.field0377
+  wideField0378:
+    path: $.wide.field0378
+  wideField0379:
+    path: $.wide.field0379
+  wideField0380:
+    path: $.wide.field0380
+  wideField0381:
+    path: $.wide.field0381
+  wideField0382:
+    path: $.wide.field0382
+  wideField0383:
+    path: $.wide.field0383
+  wideField0384:
+    path: $.wide.field0384
+  wideField0385:
+    path: $.wide.field0385
+  wideField0386:
+    path: $.wide.field0386
+  wideField0387:
+    path: $.wide.field0387
+  wideField0388:
+    path: $.wide.field0388
+  wideField0389:
+    path: $.wide.field0389
+  wideField0390:
+    path: $.wide.field0390
+  wideField0391:
+    path: $.wide.field0391
+  wideField0392:
+    path: $.wide.field0392
+  wideField0393:
+    path: $.wide.field0393
+  wideField0394:
+    path: $.wide.field0394
+  wideField0395:
+    path: $.wide.field0395
+  wideField0396:
+    path: $.wide.field0396
+  wideField0397:
+    path: $.wide.field0397
+  wideField0398:
+    path: $.wide.field0398
+  wideField0399:
+    path: $.wide.field0399
+  wideField0400:
+    path: $.wide.field0400
+  wideField0401:
+    path: $.wide.field0401
+  wideField0402:
+    path: $.wide.field0402
+  wideField0403:
+    path: $.wide.field0403
+  wideField0404:
+    path: $.wide.field0404
+  wideField0405:
+    path: $.wide.field0405
+  wideField0406:
+    path: $.wide.field0406
+  wideField0407:
+    path: $.wide.field0407
+  wideField0408:
+    path: $.wide.field0408
+  wideField0409:
+    path: $.wide.field0409
+  wideField0410:
+    path: $.wide.field0410
+  wideField0411:
+    path: $.wide.field0411
+  wideField0412:
+    path: $.wide.field0412
+  wideField0413:
+    path: $.wide.field0413
+  wideField0414:
+    path: $.wide.field0414
+  wideField0415:
+    path: $.wide.field0415
+  wideField0416:
+    path: $.wide.field0416
+  wideField0417:
+    path: $.wide.field0417
+  wideField0418:
+    path: $.wide.field0418
+  wideField0419:
+    path: $.wide.field0419
+  wideField0420:
+    path: $.wide.field0420
+  wideField0421:
+    path: $.wide.field0421
+  wideField0422:
+    path: $.wide.field0422
+  wideField0423:
+    path: $.wide.field0423
+  wideField0424:
+    path: $.wide.field0424
+  wideField0425:
+    path: $.wide.field0425
+  wideField0426:
+    path: $.wide.field0426
+  wideField0427:
+    path: $.wide.field0427
+  wideField0428:
+    path: $.wide.field0428
+  wideField0429:
+    path: $.wide.field0429
+  wideField0430:
+    path: $.wide.field0430
+  wideField0431:
+    path: $.wide.field0431
+  wideField0432:
+    path: $.wide.field0432
+  wideField0433:
+    path: $.wide.field0433
+  wideField0434:
+    path: $.wide.field0434
+  wideField0435:
+    path: $.wide.field0435
+  wideField0436:
+    path: $.wide.field0436
+  wideField0437:
+    path: $.wide.field0437
+  wideField0438:
+    path: $.wide.field0438
+  wideField0439:
+    path: $.wide.field0439
+  wideField0440:
+    path: $.wide.field0440
+  wideField0441:
+    path: $.wide.field0441
+  wideField0442:
+    path: $.wide.field0442
+  wideField0443:
+    path: $.wide.field0443
+  wideField0444:
+    path: $.wide.field0444
+  wideField0445:
+    path: $.wide.field0445
+  wideField0446:
+    path: $.wide.field0446
+  wideField0447:
+    path: $.wide.field0447
+  wideField0448:
+    path: $.wide.field0448
+  wideField0449:
+    path: $.wide.field0449
+  wideField0450:
+    path: $.wide.field0450
+  wideField0451:
+    path: $.wide.field0451
+  wideField0452:
+    path: $.wide.field0452
+  wideField0453:
+    path: $.wide.field0453
+  wideField0454:
+    path: $.wide.field0454
+  wideField0455:
+    path: $.wide.field0455
+  wideField0456:
+    path: $.wide.field0456
+  wideField0457:
+    path: $.wide.field0457
+  wideField0458:
+    path: $.wide.field0458
+  wideField0459:
+    path: $.wide.field0459
+  wideField0460:
+    path: $.wide.field0460
+  wideField0461:
+    path: $.wide.field0461
+  wideField0462:
+    path: $.wide.field0462
+  wideField0463:
+    path: $.wide.field0463
+  wideField0464:
+    path: $.wide.field0464
+  wideField0465:
+    path: $.wide.field0465
+  wideField0466:
+    path: $.wide.field0466
+  wideField0467:
+    path: $.wide.field0467
+  wideField0468:
+    path: $.wide.field0468
+  wideField0469:
+    path: $.wide.field0469
+  wideField0470:
+    path: $.wide.field0470
+  wideField0471:
+    path: $.wide.field0471
+  wideField0472:
+    path: $.wide.field0472
+  wideField0473:
+    path: $.wide.field0473
+  wideField0474:
+    path: $.wide.field0474
+  wideField0475:
+    path: $.wide.field0475
+  wideField0476:
+    path: $.wide.field0476
+  wideField0477:
+    path: $.wide.field0477
+  wideField0478:
+    path: $.wide.field0478
+  wideField0479:
+    path: $.wide.field0479
+  wideField0480:
+    path: $.wide.field0480
+  wideField0481:
+    path: $.wide.field0481
+  wideField0482:
+    path: $.wide.field0482
+  wideField0483:
+    path: $.wide.field0483
+  wideField0484:
+    path: $.wide.field0484
+  wideField0485:
+    path: $.wide.field0485
+  wideField0486:
+    path: $.wide.field0486
+  wideField0487:
+    path: $.wide.field0487
+  wideField0488:
+    path: $.wide.field0488
+  wideField0489:
+    path: $.wide.field0489
+  wideField0490:
+    path: $.wide.field0490
+  wideField0491:
+    path: $.wide.field0491
+  wideField0492:
+    path: $.wide.field0492
+  wideField0493:
+    path: $.wide.field0493
+  wideField0494:
+    path: $.wide.field0494
+  wideField0495:
+    path: $.wide.field0495
+  wideField0496:
+    path: $.wide.field0496
+  wideField0497:
+    path: $.wide.field0497
+  wideField0498:
+    path: $.wide.field0498
+  wideField0499:
+    path: $.wide.field0499
+  wideField0500:
+    path: $.wide.field0500
+  wideField0501:
+    path: $.wide.field0501
+  wideField0502:
+    path: $.wide.field0502
+  wideField0503:
+    path: $.wide.field0503
+  wideField0504:
+    path: $.wide.field0504
+  wideField0505:
+    path: $.wide.field0505
+  wideField0506:
+    path: $.wide.field0506
+  wideField0507:
+    path: $.wide.field0507
+  wideField0508:
+    path: $.wide.field0508
+  wideField0509:
+    path: $.wide.field0509
+  wideField0510:
+    path: $.wide.field0510
+  wideField0511:
+    path: $.wide.field0511
+  wideField0512:
+    path: $.wide.field0512
+  wideField0513:
+    path: $.wide.field0513
+  wideField0514:
+    path: $.wide.field0514
+  wideField0515:
+    path: $.wide.field0515
+  wideField0516:
+    path: $.wide.field0516
+  wideField0517:
+    path: $.wide.field0517
+  wideField0518:
+    path: $.wide.field0518
+  wideField0519:
+    path: $.wide.field0519
+  wideField0520:
+    path: $.wide.field0520
+  wideField0521:
+    path: $.wide.field0521
+  wideField0522:
+    path: $.wide.field0522
+  wideField0523:
+    path: $.wide.field0523
+  wideField0524:
+    path: $.wide.field0524
+  wideField0525:
+    path: $.wide.field0525
+  wideField0526:
+    path: $.wide.field0526
+  wideField0527:
+    path: $.wide.field0527
+  wideField0528:
+    path: $.wide.field0528
+  wideField0529:
+    path: $.wide.field0529
+  wideField0530:
+    path: $.wide.field0530
+  wideField0531:
+    path: $.wide.field0531
+  wideField0532:
+    path: $.wide.field0532
+  wideField0533:
+    path: $.wide.field0533
+  wideField0534:
+    path: $.wide.field0534
+  wideField0535:
+    path: $.wide.field0535
+  wideField0536:
+    path: $.wide.field0536
+  wideField0537:
+    path: $.wide.field0537
+  wideField0538:
+    path: $.wide.field0538
+  wideField0539:
+    path: $.wide.field0539
+  wideField0540:
+    path: $.wide.field0540
+  wideField0541:
+    path: $.wide.field0541
+  wideField0542:
+    path: $.wide.field0542
+  wideField0543:
+    path: $.wide.field0543
+  wideField0544:
+    path: $.wide.field0544
+  wideField0545:
+    path: $.wide.field0545
+  wideField0546:
+    path: $.wide.field0546
+  wideField0547:
+    path: $.wide.field0547
+  wideField0548:
+    path: $.wide.field0548
+  wideField0549:
+    path: $.wide.field0549
+  wideField0550:
+    path: $.wide.field0550
+  wideField0551:
+    path: $.wide.field0551
+  wideField0552:
+    path: $.wide.field0552
+  wideField0553:
+    path: $.wide.field0553
+  wideField0554:
+    path: $.wide.field0554
+  wideField0555:
+    path: $.wide.field0555
+  wideField0556:
+    path: $.wide.field0556
+  wideField0557:
+    path: $.wide.field0557
+  wideField0558:
+    path: $.wide.field0558
+  wideField0559:
+    path: $.wide.field0559
+  wideField0560:
+    path: $.wide.field0560
+  wideField0561:
+    path: $.wide.field0561
+  wideField0562:
+    path: $.wide.field0562
+  wideField0563:
+    path: $.wide.field0563
+  wideField0564:
+    path: $.wide.field0564
+  wideField0565:
+    path: $.wide.field0565
+  wideField0566:
+    path: $.wide.field0566
+  wideField0567:
+    path: $.wide.field0567
+  wideField0568:
+    path: $.wide.field0568
+  wideField0569:
+    path: $.wide.field0569
+  wideField0570:
+    path: $.wide.field0570
+  wideField0571:
+    path: $.wide.field0571
+  wideField0572:
+    path: $.wide.field0572
+  wideField0573:
+    path: $.wide.field0573
+  wideField0574:
+    path: $.wide.field0574
+  wideField0575:
+    path: $.wide.field0575
+  wideField0576:
+    path: $.wide.field0576
+  wideField0577:
+    path: $.wide.field0577
+  wideField0578:
+    path: $.wide.field0578
+  wideField0579:
+    path: $.wide.field0579
+  wideField0580:
+    path: $.wide.field0580
+  wideField0581:
+    path: $.wide.field0581
+  wideField0582:
+    path: $.wide.field0582
+  wideField0583:
+    path: $.wide.field0583
+  wideField0584:
+    path: $.wide.field0584
+  wideField0585:
+    path: $.wide.field0585
+  wideField0586:
+    path: $.wide.field0586
+  wideField0587:
+    path: $.wide.field0587
+  wideField0588:
+    path: $.wide.field0588
+  wideField0589:
+    path: $.wide.field0589
+  wideField0590:
+    path: $.wide.field0590
+  wideField0591:
+    path: $.wide.field0591
+  wideField0592:
+    path: $.wide.field0592
+  wideField0593:
+    path: $.wide.field0593
+  wideField0594:
+    path: $.wide.field0594
+  wideField0595:
+    path: $.wide.field0595
+  wideField0596:
+    path: $.wide.field0596
+  wideField0597:
+    path: $.wide.field0597
+  wideField0598:
+    path: $.wide.field0598
+  wideField0599:
+    path: $.wide.field0599
+  wideField0600:
+    path: $.wide.field0600
+  wideField0601:
+    path: $.wide.field0601
+  wideField0602:
+    path: $.wide.field0602
+  wideField0603:
+    path: $.wide.field0603
+  wideField0604:
+    path: $.wide.field0604
+  wideField0605:
+    path: $.wide.field0605
+  wideField0606:
+    path: $.wide.field0606
+  wideField0607:
+    path: $.wide.field0607
+  wideField0608:
+    path: $.wide.field0608
+  wideField0609:
+    path: $.wide.field0609
+  wideField0610:
+    path: $.wide.field0610
+  wideField0611:
+    path: $.wide.field0611
+  wideField0612:
+    path: $.wide.field0612
+  wideField0613:
+    path: $.wide.field0613
+  wideField0614:
+    path: $.wide.field0614
+  wideField0615:
+    path: $.wide.field0615
+  wideField0616:
+    path: $.wide.field0616
+  wideField0617:
+    path: $.wide.field0617
+  wideField0618:
+    path: $.wide.field0618
+  wideField0619:
+    path: $.wide.field0619
+  wideField0620:
+    path: $.wide.field0620
+  wideField0621:
+    path: $.wide.field0621
+  wideField0622:
+    path: $.wide.field0622
+  wideField0623:
+    path: $.wide.field0623
+  wideField0624:
+    path: $.wide.field0624
+  wideField0625:
+    path: $.wide.field0625
+  wideField0626:
+    path: $.wide.field0626
+  wideField0627:
+    path: $.wide.field0627
+  wideField0628:
+    path: $.wide.field0628
+  wideField0629:
+    path: $.wide.field0629
+  wideField0630:
+    path: $.wide.field0630
+  wideField0631:
+    path: $.wide.field0631
+  wideField0632:
+    path: $.wide.field0632
+  wideField0633:
+    path: $.wide.field0633
+  wideField0634:
+    path: $.wide.field0634
+  wideField0635:
+    path: $.wide.field0635
+  wideField0636:
+    path: $.wide.field0636
+  wideField0637:
+    path: $.wide.field0637
+  wideField0638:
+    path: $.wide.field0638
+  wideField0639:
+    path: $.wide.field0639
+  wideField0640:
+    path: $.wide.field0640
+  wideField0641:
+    path: $.wide.field0641
+  wideField0642:
+    path: $.wide.field0642
+  wideField0643:
+    path: $.wide.field0643
+  wideField0644:
+    path: $.wide.field0644
+  wideField0645:
+    path: $.wide.field0645
+  wideField0646:
+    path: $.wide.field0646
+  wideField0647:
+    path: $.wide.field0647
+  wideField0648:
+    path: $.wide.field0648
+  wideField0649:
+    path: $.wide.field0649
+  wideField0650:
+    path: $.wide.field0650
+  wideField0651:
+    path: $.wide.field0651
+  wideField0652:
+    path: $.wide.field0652
+  wideField0653:
+    path: $.wide.field0653
+  wideField0654:
+    path: $.wide.field0654
+  wideField0655:
+    path: $.wide.field0655
+  wideField0656:
+    path: $.wide.field0656
+  wideField0657:
+    path: $.wide.field0657
+  wideField0658:
+    path: $.wide.field0658
+  wideField0659:
+    path: $.wide.field0659
+  wideField0660:
+    path: $.wide.field0660
+  wideField0661:
+    path: $.wide.field0661
+  wideField0662:
+    path: $.wide.field0662
+  wideField0663:
+    path: $.wide.field0663
+  wideField0664:
+    path: $.wide.field0664
+  wideField0665:
+    path: $.wide.field0665
+  wideField0666:
+    path: $.wide.field0666
+  wideField0667:
+    path: $.wide.field0667
+  wideField0668:
+    path: $.wide.field0668
+  wideField0669:
+    path: $.wide.field0669
+  wideField0670:
+    path: $.wide.field0670
+  wideField0671:
+    path: $.wide.field0671
+  wideField0672:
+    path: $.wide.field0672
+  wideField0673:
+    path: $.wide.field0673
+  wideField0674:
+    path: $.wide.field0674
+  wideField0675:
+    path: $.wide.field0675
+  wideField0676:
+    path: $.wide.field0676
+  wideField0677:
+    path: $.wide.field0677
+  wideField0678:
+    path: $.wide.field0678
+  wideField0679:
+    path: $.wide.field0679
+  wideField0680:
+    path: $.wide.field0680
+  wideField0681:
+    path: $.wide.field0681
+  wideField0682:
+    path: $.wide.field0682
+  wideField0683:
+    path: $.wide.field0683
+  wideField0684:
+    path: $.wide.field0684
+  wideField0685:
+    path: $.wide.field0685
+  wideField0686:
+    path: $.wide.field0686
+  wideField0687:
+    path: $.wide.field0687
+  wideField0688:
+    path: $.wide.field0688
+  wideField0689:
+    path: $.wide.field0689
+  wideField0690:
+    path: $.wide.field0690
+  wideField0691:
+    path: $.wide.field0691
+  wideField0692:
+    path: $.wide.field0692
+  wideField0693:
+    path: $.wide.field0693
+  wideField0694:
+    path: $.wide.field0694
+  wideField0695:
+    path: $.wide.field0695
+  wideField0696:
+    path: $.wide.field0696
+  wideField0697:
+    path: $.wide.field0697
+  wideField0698:
+    path: $.wide.field0698
+  wideField0699:
+    path: $.wide.field0699
+  wideField0700:
+    path: $.wide.field0700
+  wideField0701:
+    path: $.wide.field0701
+  wideField0702:
+    path: $.wide.field0702
+  wideField0703:
+    path: $.wide.field0703
+  wideField0704:
+    path: $.wide.field0704
+  wideField0705:
+    path: $.wide.field0705
+  wideField0706:
+    path: $.wide.field0706
+  wideField0707:
+    path: $.wide.field0707
+  wideField0708:
+    path: $.wide.field0708
+  wideField0709:
+    path: $.wide.field0709
+  wideField0710:
+    path: $.wide.field0710
+  wideField0711:
+    path: $.wide.field0711
+  wideField0712:
+    path: $.wide.field0712
+  wideField0713:
+    path: $.wide.field0713
+  wideField0714:
+    path: $.wide.field0714
+  wideField0715:
+    path: $.wide.field0715
+  wideField0716:
+    path: $.wide.field0716
+  wideField0717:
+    path: $.wide.field0717
+  wideField0718:
+    path: $.wide.field0718
+  wideField0719:
+    path: $.wide.field0719
+  wideField0720:
+    path: $.wide.field0720
+  wideField0721:
+    path: $.wide.field0721
+  wideField0722:
+    path: $.wide.field0722
+  wideField0723:
+    path: $.wide.field0723
+  wideField0724:
+    path: $.wide.field0724
+  wideField0725:
+    path: $.wide.field0725
+  wideField0726:
+    path: $.wide.field0726
+  wideField0727:
+    path: $.wide.field0727
+  wideField0728:
+    path: $.wide.field0728
+  wideField0729:
+    path: $.wide.field0729
+  wideField0730:
+    path: $.wide.field0730
+  wideField0731:
+    path: $.wide.field0731
+  wideField0732:
+    path: $.wide.field0732
+  wideField0733:
+    path: $.wide.field0733
+  wideField0734:
+    path: $.wide.field0734
+  wideField0735:
+    path: $.wide.field0735
+  wideField0736:
+    path: $.wide.field0736
+  wideField0737:
+    path: $.wide.field0737
+  wideField0738:
+    path: $.wide.field0738
+  wideField0739:
+    path: $.wide.field0739
+  wideField0740:
+    path: $.wide.field0740
+  wideField0741:
+    path: $.wide.field0741
+  wideField0742:
+    path: $.wide.field0742
+  wideField0743:
+    path: $.wide.field0743
+  wideField0744:
+    path: $.wide.field0744
+  wideField0745:
+    path: $.wide.field0745
+  wideField0746:
+    path: $.wide.field0746
+  wideField0747:
+    path: $.wide.field0747
+  wideField0748:
+    path: $.wide.field0748
+  wideField0749:
+    path: $.wide.field0749
+  wideField0750:
+    path: $.wide.field0750
+  wideField0751:
+    path: $.wide.field0751
+  wideField0752:
+    path: $.wide.field0752
+  wideField0753:
+    path: $.wide.field0753
+  wideField0754:
+    path: $.wide.field0754
+  wideField0755:
+    path: $.wide.field0755
+  wideField0756:
+    path: $.wide.field0756
+  wideField0757:
+    path: $.wide.field0757
+  wideField0758:
+    path: $.wide.field0758
+  wideField0759:
+    path: $.wide.field0759
+  wideField0760:
+    path: $.wide.field0760
+  wideField0761:
+    path: $.wide.field0761
+  wideField0762:
+    path: $.wide.field0762
+  wideField0763:
+    path: $.wide.field0763
+  wideField0764:
+    path: $.wide.field0764
+  wideField0765:
+    path: $.wide.field0765
+  wideField0766:
+    path: $.wide.field0766
+  wideField0767:
+    path: $.wide.field0767
+  wideField0768:
+    path: $.wide.field0768
+  wideField0769:
+    path: $.wide.field0769
+  wideField0770:
+    path: $.wide.field0770
+  wideField0771:
+    path: $.wide.field0771
+  wideField0772:
+    path: $.wide.field0772
+  wideField0773:
+    path: $.wide.field0773
+  wideField0774:
+    path: $.wide.field0774
+  wideField0775:
+    path: $.wide.field0775
+  wideField0776:
+    path: $.wide.field0776
+  wideField0777:
+    path: $.wide.field0777
+  wideField0778:
+    path: $.wide.field0778
+  wideField0779:
+    path: $.wide.field0779
+  wideField0780:
+    path: $.wide.field0780
+  wideField0781:
+    path: $.wide.field0781
+  wideField0782:
+    path: $.wide.field0782
+  wideField0783:
+    path: $.wide.field0783
+  wideField0784:
+    path: $.wide.field0784
+  wideField0785:
+    path: $.wide.field0785
+  wideField0786:
+    path: $.wide.field0786
+  wideField0787:
+    path: $.wide.field0787
+  wideField0788:
+    path: $.wide.field0788
+  wideField0789:
+    path: $.wide.field0789
+  wideField0790:
+    path: $.wide.field0790
+  wideField0791:
+    path: $.wide.field0791
+  wideField0792:
+    path: $.wide.field0792
+  wideField0793:
+    path: $.wide.field0793
+  wideField0794:
+    path: $.wide.field0794
+  wideField0795:
+    path: $.wide.field0795
+  wideField0796:
+    path: $.wide.field0796
+  wideField0797:
+    path: $.wide.field0797
+  wideField0798:
+    path: $.wide.field0798
+  wideField0799:
+    path: $.wide.field0799
+  wideField0800:
+    path: $.wide.field0800
+  wideField0801:
+    path: $.wide.field0801
+  wideField0802:
+    path: $.wide.field0802
+  wideField0803:
+    path: $.wide.field0803
+  wideField0804:
+    path: $.wide.field0804
+  wideField0805:
+    path: $.wide.field0805
+  wideField0806:
+    path: $.wide.field0806
+  wideField0807:
+    path: $.wide.field0807
+  wideField0808:
+    path: $.wide.field0808
+  wideField0809:
+    path: $.wide.field0809
+  wideField0810:
+    path: $.wide.field0810
+  wideField0811:
+    path: $.wide.field0811
+  wideField0812:
+    path: $.wide.field0812
+  wideField0813:
+    path: $.wide.field0813
+  wideField0814:
+    path: $.wide.field0814
+  wideField0815:
+    path: $.wide.field0815
+  wideField0816:
+    path: $.wide.field0816
+  wideField0817:
+    path: $.wide.field0817
+  wideField0818:
+    path: $.wide.field0818
+  wideField0819:
+    path: $.wide.field0819
+  wideField0820:
+    path: $.wide.field0820
+  wideField0821:
+    path: $.wide.field0821
+  wideField0822:
+    path: $.wide.field0822
+  wideField0823:
+    path: $.wide.field0823
+  wideField0824:
+    path: $.wide.field0824
+  wideField0825:
+    path: $.wide.field0825
+  wideField0826:
+    path: $.wide.field0826
+  wideField0827:
+    path: $.wide.field0827
+  wideField0828:
+    path: $.wide.field0828
+  wideField0829:
+    path: $.wide.field0829
+  wideField0830:
+    path: $.wide.field0830
+  wideField0831:
+    path: $.wide.field0831
+  wideField0832:
+    path: $.wide.field0832
+  wideField0833:
+    path: $.wide.field0833
+  wideField0834:
+    path: $.wide.field0834
+  wideField0835:
+    path: $.wide.field0835
+  wideField0836:
+    path: $.wide.field0836
+  wideField0837:
+    path: $.wide.field0837
+  wideField0838:
+    path: $.wide.field0838
+  wideField0839:
+    path: $.wide.field0839
+  wideField0840:
+    path: $.wide.field0840
+  wideField0841:
+    path: $.wide.field0841
+  wideField0842:
+    path: $.wide.field0842
+  wideField0843:
+    path: $.wide.field0843
+  wideField0844:
+    path: $.wide.field0844
+  wideField0845:
+    path: $.wide.field0845
+  wideField0846:
+    path: $.wide.field0846
+  wideField0847:
+    path: $.wide.field0847
+  wideField0848:
+    path: $.wide.field0848
+  wideField0849:
+    path: $.wide.field0849
+  wideField0850:
+    path: $.wide.field0850
+  wideField0851:
+    path: $.wide.field0851
+  wideField0852:
+    path: $.wide.field0852
+  wideField0853:
+    path: $.wide.field0853
+  wideField0854:
+    path: $.wide.field0854
+  wideField0855:
+    path: $.wide.field0855
+  wideField0856:
+    path: $.wide.field0856
+  wideField0857:
+    path: $.wide.field0857
+  wideField0858:
+    path: $.wide.field0858
+  wideField0859:
+    path: $.wide.field0859
+  wideField0860:
+    path: $.wide.field0860
+  wideField0861:
+    path: $.wide.field0861
+  wideField0862:
+    path: $.wide.field0862
+  wideField0863:
+    path: $.wide.field0863
+  wideField0864:
+    path: $.wide.field0864
+  wideField0865:
+    path: $.wide.field0865
+  wideField0866:
+    path: $.wide.field0866
+  wideField0867:
+    path: $.wide.field0867
+  wideField0868:
+    path: $.wide.field0868
+  wideField0869:
+    path: $.wide.field0869
+  wideField0870:
+    path: $.wide.field0870
+  wideField0871:
+    path: $.wide.field0871
+  wideField0872:
+    path: $.wide.field0872
+  wideField0873:
+    path: $.wide.field0873
+  wideField0874:
+    path: $.wide.field0874
+  wideField0875:
+    path: $.wide.field0875
+  wideField0876:
+    path: $.wide.field0876
+  wideField0877:
+    path: $.wide.field0877
+  wideField0878:
+    path: $.wide.field0878
+  wideField0879:
+    path: $.wide.field0879
+  wideField0880:
+    path: $.wide.field0880
+  wideField0881:
+    path: $.wide.field0881
+  wideField0882:
+    path: $.wide.field0882
+  wideField0883:
+    path: $.wide.field0883
+  wideField0884:
+    path: $.wide.field0884
+  wideField0885:
+    path: $.wide.field0885
+  wideField0886:
+    path: $.wide.field0886
+  wideField0887:
+    path: $.wide.field0887
+  wideField0888:
+    path: $.wide.field0888
+  wideField0889:
+    path: $.wide.field0889
+  wideField0890:
+    path: $.wide.field0890
+  wideField0891:
+    path: $.wide.field0891
+  wideField0892:
+    path: $.wide.field0892
+  wideField0893:
+    path: $.wide.field0893
+  wideField0894:
+    path: $.wide.field0894
+  wideField0895:
+    path: $.wide.field0895
+  wideField0896:
+    path: $.wide.field0896
+  wideField0897:
+    path: $.wide.field0897
+  wideField0898:
+    path: $.wide.field0898
+  wideField0899:
+    path: $.wide.field0899
+  wideField0900:
+    path: $.wide.field0900
+  wideField0901:
+    path: $.wide.field0901
+  wideField0902:
+    path: $.wide.field0902
+  wideField0903:
+    path: $.wide.field0903
+  wideField0904:
+    path: $.wide.field0904
+  wideField0905:
+    path: $.wide.field0905
+  wideField0906:
+    path: $.wide.field0906
+  wideField0907:
+    path: $.wide.field0907
+  wideField0908:
+    path: $.wide.field0908
+  wideField0909:
+    path: $.wide.field0909
+  wideField0910:
+    path: $.wide.field0910
+  wideField0911:
+    path: $.wide.field0911
+  wideField0912:
+    path: $.wide.field0912
+  wideField0913:
+    path: $.wide.field0913
+  wideField0914:
+    path: $.wide.field0914
+  wideField0915:
+    path: $.wide.field0915
+  wideField0916:
+    path: $.wide.field0916
+  wideField0917:
+    path: $.wide.field0917
+  wideField0918:
+    path: $.wide.field0918
+  wideField0919:
+    path: $.wide.field0919
+  wideField0920:
+    path: $.wide.field0920
+  wideField0921:
+    path: $.wide.field0921
+  wideField0922:
+    path: $.wide.field0922
+  wideField0923:
+    path: $.wide.field0923
+  wideField0924:
+    path: $.wide.field0924
+  wideField0925:
+    path: $.wide.field0925
+  wideField0926:
+    path: $.wide.field0926
+  wideField0927:
+    path: $.wide.field0927
+  wideField0928:
+    path: $.wide.field0928
+  wideField0929:
+    path: $.wide.field0929
+  wideField0930:
+    path: $.wide.field0930
+  wideField0931:
+    path: $.wide.field0931
+  wideField0932:
+    path: $.wide.field0932
+  wideField0933:
+    path: $.wide.field0933
+  wideField0934:
+    path: $.wide.field0934
+  wideField0935:
+    path: $.wide.field0935
+  wideField0936:
+    path: $.wide.field0936
+  wideField0937:
+    path: $.wide.field0937
+  wideField0938:
+    path: $.wide.field0938
+  wideField0939:
+    path: $.wide.field0939
+  wideField0940:
+    path: $.wide.field0940
+  wideField0941:
+    path: $.wide.field0941
+  wideField0942:
+    path: $.wide.field0942
+  wideField0943:
+    path: $.wide.field0943
+  wideField0944:
+    path: $.wide.field0944
+  wideField0945:
+    path: $.wide.field0945
+  wideField0946:
+    path: $.wide.field0946
+  wideField0947:
+    path: $.wide.field0947
+  wideField0948:
+    path: $.wide.field0948
+  wideField0949:
+    path: $.wide.field0949
+  wideField0950:
+    path: $.wide.field0950
+  wideField0951:
+    path: $.wide.field0951
+  wideField0952:
+    path: $.wide.field0952
+  wideField0953:
+    path: $.wide.field0953
+  wideField0954:
+    path: $.wide.field0954
+  wideField0955:
+    path: $.wide.field0955
+  wideField0956:
+    path: $.wide.field0956
+  wideField0957:
+    path: $.wide.field0957
+  wideField0958:
+    path: $.wide.field0958
+  wideField0959:
+    path: $.wide.field0959
+  wideField0960:
+    path: $.wide.field0960
+  wideField0961:
+    path: $.wide.field0961
+  wideField0962:
+    path: $.wide.field0962
+  wideField0963:
+    path: $.wide.field0963
+  wideField0964:
+    path: $.wide.field0964
+  wideField0965:
+    path: $.wide.field0965
+  wideField0966:
+    path: $.wide.field0966
+  wideField0967:
+    path: $.wide.field0967
+  wideField0968:
+    path: $.wide.field0968
+  wideField0969:
+    path: $.wide.field0969
+  wideField0970:
+    path: $.wide.field0970

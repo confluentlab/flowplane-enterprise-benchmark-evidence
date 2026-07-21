@@ -24,15 +24,35 @@
     "sha256": "85242e9ecc0431ddd990f3ecb8cb30dadbdf306460bb1be60e943b47c3216695",
     "sourceTimestampSeconds": 405
   },
-  "generationPipeline": {
+  "operationalProofPipeline": {
     "classification": "SOURCE_INSPECTED",
-    "documentation": "reproduction/live-demo-video/README.md",
-    "orchestration": "reproduction/live-demo-video/orchestration/10-generate-demo-video.ps1",
-    "renderer": "reproduction/live-demo-video/remotion-motion/render-motion-video.ps1",
-    "composition": "reproduction/live-demo-video/remotion-motion/src/Composition.tsx",
-    "narrationCues": "reproduction/live-demo-video/remotion-motion/narration-cues.json",
-    "resolvedCaptions": "reproduction/live-demo-video/detailed-narration-captions.json",
-    "sourceSnapshot": "reproduction/live-demo-video/source-snapshot.json",
+    "documentation": "reproduction/live-demo-flowplane/README.md",
+    "commonLibrary": "reproduction/live-demo-flowplane/scripts/FlowplaneDemo.Common.ps1",
+    "prepare": "reproduction/live-demo-flowplane/scripts/00-prepare-connect-flink-demo.ps1",
+    "reset": "reproduction/live-demo-flowplane/scripts/01-reset-demo-state.ps1",
+    "writeBoundary": "reproduction/live-demo-flowplane/scripts/assert-runtime-write-boundary.ps1",
+    "createV1": "reproduction/live-demo-flowplane/scripts/02-create-approve-publish-mapping-v1.ps1",
+    "connectRegistration": "reproduction/live-demo-flowplane/scripts/03-apply-connect-ui-registration.ps1",
+    "flinkRegistration": "reproduction/live-demo-flowplane/scripts/03-register-flink-job.ps1",
+    "verifyIdle": "reproduction/live-demo-flowplane/scripts/03-verify-idle-runtimes.ps1",
+    "deployV1": "reproduction/live-demo-flowplane/scripts/04-deploy-v1-to-runtimes.ps1",
+    "produceV1": "reproduction/live-demo-flowplane/scripts/05-produce-and-verify-v1.ps1",
+    "createV2": "reproduction/live-demo-flowplane/scripts/06-create-approve-publish-mapping-v2.ps1",
+    "deployV2": "reproduction/live-demo-flowplane/scripts/07-deploy-v2-to-runtimes.ps1",
+    "produceV2": "reproduction/live-demo-flowplane/scripts/08-produce-and-verify-v2.ps1",
+    "finalReport": "reproduction/live-demo-flowplane/scripts/09-generate-demo-evidence-report.ps1",
+    "mappings": [
+      "reproduction/live-demo-flowplane/fixtures/mapping-v1.yaml",
+      "reproduction/live-demo-flowplane/fixtures/mapping-v2.yaml"
+    ],
+    "payloads": [
+      "reproduction/live-demo-flowplane/fixtures/payload-v1-valid.json",
+      "reproduction/live-demo-flowplane/fixtures/payload-v1-invalid.json",
+      "reproduction/live-demo-flowplane/fixtures/payload-v2-valid.json",
+      "reproduction/live-demo-flowplane/fixtures/payload-v2-invalid.json"
+    ],
+    "runtimeState": "reproduction/live-demo-flowplane/fixtures/runtime-and-topic-state.json",
+    "sourceSnapshot": "reproduction/live-demo-flowplane/source-snapshot.json",
     "exactExecutionTimeSnapshotClaimed": false
   },
   "scope": {
@@ -64,11 +84,15 @@
     {
       "version": "1.1.0",
       "sha256": "1919e736455fa02b2ff0bfcfa71abcc9040bd29a90eded897ffe8bbe603b8835",
-      "visibleAdditions": [
-        "customerRiskBand",
-        "mappingSchemaVersion",
-        "runtimeMetadataField"
-      ],
+      "visibleV2Differences": {
+        "newOutputFields": [
+          "customerRiskBand",
+          "runtimeMetadataField"
+        ],
+        "changedOutputValues": [
+          "mappingSchemaVersion"
+        ]
+      },
       "flink": { "transformed": 1, "dlq": 1 },
       "kafkaConnect": { "mongoDocuments": 1, "dlq": 1 }
     }

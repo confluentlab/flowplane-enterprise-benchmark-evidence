@@ -2,7 +2,7 @@
 
 This directory preserves the scripts and canonical fixture used to create the successful local integration bundles. The scripts are inspectable evidence of the processing path, but they are not a standalone replacement for the Flowplane product source tree and Docker build context.
 
-For the captioned Connect + Flink walkthrough, see [How the live walkthrough video was produced](live-demo-video/README.md). That guide links the inspected orchestration script, Remotion project, locked dependencies, narration cues, and final resolved caption timeline.
+For the Connect + Flink walkthrough, see the [operational scripts behind the live Flowplane run](live-demo-flowplane/README.md). That guide links the runtime-registration, mapping-governance, deployment, raw-topic production, runtime-verification, and evidence-assembly scripts together with the actual mapping and payload fixtures.
 
 ## Prerequisites
 
