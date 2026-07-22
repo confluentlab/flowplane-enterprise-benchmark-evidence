@@ -1,0 +1,28 @@
+{
+  "event": {
+    "id": "evt-001",
+    "type": "device_alert",
+    "trace": "trace-abc-123"
+  },
+  "tenant": {
+    "region": "us-west"
+  },
+  "device": {
+    "id": "42",
+    "type": "gateway",
+    "status": "OK",
+    "serial": "GW-2026-0042",
+    "firmware": "fw-v2.7.1",
+    "token": "tok-1234567890"
+  },
+  "risk": "HIGH",
+  "message": "  Fan   speed   unstable  ",
+  "temperatureC": 20,
+  "signals": [
+    { "name": "cpu", "value": 82 },
+    { "name": "mem", "value": 67 },
+    { "name": "disk", "value": 91 }
+  ],
+  "tags": ["critical", "edge", "critical"],
+  "nullable": null
+}

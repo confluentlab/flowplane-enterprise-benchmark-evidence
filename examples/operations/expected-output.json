@@ -1,0 +1,23 @@
+{
+  "event_id": "evt-001",
+  "event_type": "DEVICE_ALERT",
+  "region": "us-west",
+  "label": "gateway-42",
+  "route": "page",
+  "action": "observe",
+  "serial_family": "GW",
+  "firmware": "v2.7.1",
+  "normalized_message": "Fan speed unstable",
+  "temperature_f": 68.00,
+  "first_signal": "cpu",
+  "high_signals": ["cpu", "disk"],
+  "signal_sum": 2.4E+2,
+  "unique_tags": ["critical", "edge"],
+  "device_summary": {
+    "id": "42",
+    "status": "OK"
+  },
+  "token": "**********7890",
+  "trace_hash": "369a988ff08e5e6d3f8691f13b6c83330676a998ca62320644c6a3912c2cc932",
+  "nullable_default": "fallback"
+}

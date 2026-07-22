@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-07-22T12:57:19Z",
+  "classification": "CONTRACT_VERIFIED",
+  "engineRevision": "1742b6bd17bf19fd7596066b1e5a0e7b5cb3a1ae",
+  "result": {
+    "status": "PASS",
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "coverage": [
+    "all-operations sample",
+    "operation boundary contracts",
+    "encryption and decryption round trip",
+    "output shapes",
+    "parse-strategy equivalence",
+    "public starter fixture exact output"
+  ],
+  "fixtures": {
+    "mapping.yml": "sha256:d61ec4fd3173225fe608dbae5c0e6352bf578038ef09a8a0c64d54770bcb0ed9",
+    "input.json": "sha256:1ad5689cb4dca491f2e3f174dde0bb4cb5f1caef261a5c41dbafc5a06fbe1dfb",
+    "expected-output.json": "sha256:feb6082094c251398f794179e90f75d6314f242c9ccdfdc528c891bc00b50cd3"
+  },
+  "notes": [
+    "All fixture data is synthetic.",
+    "The exact-output fixture excludes nondeterministic UUID, current-time, and encryption outputs.",
+    "No production source code or internal source-to-operation mapping is included."
+  ]
+}

@@ -1,0 +1,82 @@
+version: 1
+name: operations-starter
+output: FLAT_OBJECT
+
+lookups:
+  statusCodes:
+    OK: observe
+    FAIL: dispatch
+
+fields:
+  event_id: $.event.id
+  event_type:
+    path: $.event.type
+    case_convert: upper
+  region:
+    path: $.tenant.missing
+    fallback:
+      - $.tenant.region
+  label:
+    valueExpr:
+      function:
+        name: concat
+        args:
+          - path: $.device.type
+          - const: "-"
+          - path: $.device.id
+  route:
+    valueExpr:
+      case:
+        branches:
+          - when:
+              path: $.risk
+              operator: EQ
+              value: HIGH
+            then:
+              const: page
+        else:
+          const: observe
+  action:
+    path: $.device.status
+    lookup:
+      dictionary: statusCodes
+  serial_family:
+    path: $.device.serial
+    regex_extract: "^(GW)-.*"
+  firmware:
+    path: $.device.firmware
+    regex_replace: "^fw-"
+    replacement: ""
+  normalized_message:
+    path: $.message
+    normalize_string: true
+  temperature_f:
+    expression: "$.temperatureC * 1.8 + 32"
+    round:
+      scale: 2
+  first_signal:
+    path: $.signals[*].name
+    array_mode: FIRST
+  high_signals:
+    path: $.signals[?(@.value >= 80)].name
+    array_mode: FILTER_ALL
+  signal_sum:
+    path: $.signals[*].value
+    aggregate: sum
+  unique_tags:
+    path: $.tags[*]
+    distinct: true
+  device_summary:
+    object:
+      id: $.device.id
+      status: $.device.status
+  token:
+    path: $.device.token
+    mask: last4
+  trace_hash:
+    path: $.event.trace
+    hash: sha256
+  nullable_default:
+    path: $.nullable
+    onNull: DEFAULT
+    default: fallback

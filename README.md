@@ -6,7 +6,7 @@ Flowplane owns transformation semantics. The host runtime owns transport, delive
 
 This separation gives teams one place to author, validate, approve, version, deploy, observe, and roll back transformation logic without forcing every data system to adopt a new transport or connector model.
 
-[Watch the full live walkthrough](assets/flowplane-live-screen-demo-motion.mp4) · [Read the walkthrough](docs/live-demo.md) · [See how it works](docs/how-it-works.md) · [Inspect the evidence](evidence/integration-proofs/EVIDENCE-OVERVIEW.md)
+[Watch the full live walkthrough](assets/flowplane-live-screen-demo-motion.mp4) · [Read the walkthrough](docs/live-demo.md) · [Browse supported operations](docs/operations-and-transformations.md) · [Inspect the evidence](evidence/integration-proofs/EVIDENCE-OVERVIEW.md)
 
 ## Why Flowplane exists
 
@@ -149,6 +149,7 @@ The repository contains preserved local integration runs, exact record accountin
 | Start here | What it contains |
 |---|---|
 | [Evidence overview](evidence/integration-proofs/EVIDENCE-OVERVIEW.md) | Tested integration paths, preferred runs, screenshots, and proof boundaries |
+| [Operations and transformations](docs/operations-and-transformations.md) | Current stateless mapping surface with a minimal example for every supported operation |
 | [Claims matrix](evidence/claims-matrix.csv) | Public claims mapped to evidence and current status |
 | [Scope and limitations](docs/limitations.md) | Boundaries, exclusions, and claims that are not made |
 | [Historical attempts](evidence/historical-attempts/README.md) | Preserved incomplete, failed, and superseded runs |
@@ -181,13 +182,15 @@ Flowplane does not replace:
 
 Flowplane provides the governed transformation layer used by those systems.
 
-This public evidence repository also excludes Flowplane's production source code, complete transformation grammar, compiler and parser implementation, optimization strategy, persistence model, production infrastructure, authentication material, and proprietary mapping artifacts. See [Scope and limitations](docs/limitations.md).
+This public evidence repository documents the supported stateless operation surface but excludes Flowplane's production source code, compiler and parser implementation, optimization strategy, persistence model, production infrastructure, authentication material, and proprietary mapping artifacts. See [Scope and limitations](docs/limitations.md).
 
 ## Repository navigation
 
 - [`docs/architecture.md`](docs/architecture.md) — system boundaries and component responsibilities
 - [`docs/live-demo.md`](docs/live-demo.md) — full live workflow, chapter guide, and proof boundary
 - [`docs/how-it-works.md`](docs/how-it-works.md) — mapping lifecycle from authoring through runtime execution
+- [`docs/operations-and-transformations.md`](docs/operations-and-transformations.md) — supported mapping operations, policies, and minimal examples
+- [`examples/operations/README.md`](examples/operations/README.md) — verified starter mapping with input and expected output
 - [`docs/runtime-portability.md`](docs/runtime-portability.md) — execution modes and latest preserved local evidence
 - [`docs/governance-and-security.md`](docs/governance-and-security.md) — artifact, access-control, audit, and telemetry model
 - [`docs/limitations.md`](docs/limitations.md) — evidence scope and non-goals
